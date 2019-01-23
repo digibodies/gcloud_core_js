@@ -1,6 +1,6 @@
 // Tests around the singleton client
 const {Datastore} = require('@google-cloud/datastore');
-const SingletonClient = require('../../src/datastore/singletonClient');
+const SingletonClient = require('../../dist/datastore/singletonClient');
 
 describe('singleton tests', () => {
   test('that two instances of stock Datastore client are separate objects', () => {
