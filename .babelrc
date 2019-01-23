@@ -1,0 +1,15 @@
+// These are the preset configs to transpile for the installable package
+{
+  "env": {
+    "development": {
+      "presets": ["next/babel"],
+    },
+    "production": {
+      "presets": [
+        ["es2015", {}],
+        ["stage-0"],
+      ],
+      "plugins": []
+    }
+  }
+}
