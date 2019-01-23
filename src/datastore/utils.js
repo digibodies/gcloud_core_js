@@ -37,7 +37,24 @@ function fromResourceId(datastoreClient, resource_id) {
   return key;
 }
 
+async function getEntityByResourceId(datastoreClient, expected_kind, resource_id) {
+  // TODO: Better handling of errors
+
+  if (!resource_id || typeof resource_id != 'string' || resource_id == '') {
+    throw TypeError('Resource Ids must be an instance of str. Received:' + resource_id);
+  }
+
+  key = fromResourceId(datastoreClient, resource_id);
+  if (key.kind != expected_kind) {
+    throw Error('Expected key for kind ' + expected_kind + ' but found kind ' + key.kind + ' instead.');
+  }
+
+  let [entity] = await datastoreClient.get(key);
+  return entity;
+}
+
 module.exports = {
   toResourceId: toResourceId,
-  fromResourceId: fromResourceId
+  fromResourceId: fromResourceId,
+  getEntityByResourceId: getEntityByResourceId
 };

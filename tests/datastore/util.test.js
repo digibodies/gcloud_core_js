@@ -70,8 +70,31 @@ test('resource id with incorrect padding errors', () => {
 
 
 
-test('jive2', () => {
-  let key = client.key(['Event', 5691902590451712]);
+test('get entity by resource id success', async () => {
+  // Setup Test
+  let key = client.key(['UserEntity', 1]);
 
-  expect(ds.fromResourceId(client, 'RXZlbnQeHzU2OTE5MDI1OTA0NTE3MTI')).toEqual(key);
+  // Prepares the new entity
+  const user = {
+    key: key,
+    data: {
+      username: 'ricksanchez',
+      given_name: 'Rick',
+      last_name: 'Sanchez',
+    },
+  };
+
+  try {
+    await client.save(user);
+  } catch(err) {
+    throw new Error('Unable to connect to datastore emulator. Is it running (`make test-env`) and the `DATASTORE_EMULATOR_HOST` is correct in the Makefile? Original Error: ' + err.message);
+  };
+
+  let resource_id = ds.toResourceId(key);
+
+  // Run Code to test
+  let result = await ds.getEntityByResourceId(client, 'UserEntity', resource_id);
+
+  // Check Results
+  expect(result.username).toEqual('ricksanchez');
 });

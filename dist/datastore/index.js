@@ -1,6 +1,12 @@
+'use strict';
+
 // Datastore helpers
-const {toResourceId, fromResourceId, getEntityByResourceId} = require('./key_utils');
-const singletonClient = require('./singletonClient');
+var _require = require('./key_utils'),
+    toResourceId = _require.toResourceId,
+    fromResourceId = _require.fromResourceId,
+    getEntityByResourceId = _require.getEntityByResourceId;
+
+var singletonClient = require('./singletonClient');
 
 module.exports = {
   Client: singletonClient,
