@@ -1,5 +1,5 @@
 // Datastore helpers
-const {toResourceId, fromResourceId, getEntityByResourceId} = require('./key_utils');
+const {toResourceId, fromResourceId, getEntityByResourceId} = require('./utils');
 const singletonClient = require('./singletonClient');
 
 module.exports = {

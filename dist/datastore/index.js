@@ -1,7 +1,7 @@
 'use strict';
 
 // Datastore helpers
-var _require = require('./key_utils'),
+var _require = require('./utils'),
     toResourceId = _require.toResourceId,
     fromResourceId = _require.fromResourceId,
     getEntityByResourceId = _require.getEntityByResourceId;
