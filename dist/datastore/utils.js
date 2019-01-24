@@ -14,7 +14,7 @@ var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 var getEntityByResourceId = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(datastoreClient, expected_kind, resource_id) {
-    var _ref2, _ref3, entity;
+    var key, result, _result, entity;
 
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
@@ -28,7 +28,6 @@ var getEntityByResourceId = function () {
             throw TypeError('Resource Ids must be an instance of str. Received:' + resource_id);
 
           case 2:
-
             key = fromResourceId(datastoreClient, resource_id);
 
             if (!(key.kind != expected_kind)) {
@@ -43,12 +42,11 @@ var getEntityByResourceId = function () {
             return datastoreClient.get(key);
 
           case 7:
-            _ref2 = _context.sent;
-            _ref3 = (0, _slicedToArray3.default)(_ref2, 1);
-            entity = _ref3[0];
+            result = _context.sent;
+            _result = (0, _slicedToArray3.default)(result, 1), entity = _result[0];
             return _context.abrupt('return', entity);
 
-          case 11:
+          case 10:
           case 'end':
             return _context.stop();
         }
@@ -75,8 +73,19 @@ function toResourceId(key) {
   //https://github.com/googleapis/nodejs-datastore/blob/master/samples/concepts.js
 
   var bits = key.path.map(function (bit, i) {
-    if (i % 2 === 1 && typeof bit === 'number') {
-      bit = INTPREFIX + bit.toString();
+    if (i % 2 === 1) {
+      if (typeof bit === 'number') {
+        bit = INTPREFIX + bit.toString();
+      } else if (typeof bit == 'string') {
+        // TODO: This will convert "1234" to 1234, which...
+        // node + google + 64 bit ints = chaos
+
+        var maybeInt = Number(bit);
+        if (maybeInt != NaN) {
+
+          bit = INTPREFIX + bit.toString();
+        }
+      }
     }
     return bit;
   });
@@ -93,7 +102,9 @@ function fromResourceId(datastoreClient, resource_id) {
 
   var path = bits.map(function (bit) {
     if (bit[0] == INTPREFIX) {
-      bit = Number(bit.replace(INTPREFIX, ''));
+      var intStr = bit.replace(INTPREFIX, '');
+      // Note: This seems to be working with 16digit longs
+      bit = Number(intStr);
     }
     return bit;
   });

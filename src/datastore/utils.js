@@ -10,8 +10,20 @@ function toResourceId(key) {
   //https://github.com/googleapis/nodejs-datastore/blob/master/samples/concepts.js
 
   let bits = key.path.map((bit, i) => {
-    if (i % 2 === 1 && typeof bit === 'number') {
-      bit = INTPREFIX + bit.toString();
+    if (i % 2 === 1) {
+      if (typeof bit === 'number') {
+        bit = INTPREFIX + bit.toString();
+      }
+      else if (typeof bit == 'string') {
+        // TODO: This will convert "1234" to 1234, which...
+        // node + google + 64 bit ints = chaos
+
+        let maybeInt = Number(bit);
+        if (maybeInt != NaN) {
+
+          bit = INTPREFIX + bit.toString();
+        }
+      }
     }
     return bit;
   });
@@ -28,7 +40,9 @@ function fromResourceId(datastoreClient, resource_id) {
 
   let path = bits.map((bit) => {
     if (bit[0] == INTPREFIX) {
-      bit = Number(bit.replace(INTPREFIX, ''));
+      let intStr = bit.replace(INTPREFIX, '');
+      // Note: This seems to be working with 16digit longs
+      bit = Number(intStr);
     }
     return bit;
   });
@@ -44,12 +58,14 @@ async function getEntityByResourceId(datastoreClient, expected_kind, resource_id
     throw TypeError('Resource Ids must be an instance of str. Received:' + resource_id);
   }
 
-  key = fromResourceId(datastoreClient, resource_id);
+  let key = fromResourceId(datastoreClient, resource_id);
   if (key.kind != expected_kind) {
     throw Error('Expected key for kind ' + expected_kind + ' but found kind ' + key.kind + ' instead.');
   }
 
-  let [entity] = await datastoreClient.get(key);
+  let result = await datastoreClient.get(key);
+
+  let [entity] = result;
   return entity;
 }
 
