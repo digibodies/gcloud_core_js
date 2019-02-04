@@ -25,7 +25,7 @@ var getEntityByResourceId = function () {
               break;
             }
 
-            throw TypeError('Resource Ids must be an instance of str. Received:' + resource_id);
+            throw new InvalidResourceId('Resource Ids must be an instance of str. Received:' + resource_id);
 
           case 2:
             key = fromResourceId(datastoreClient, resource_id);
@@ -35,7 +35,7 @@ var getEntityByResourceId = function () {
               break;
             }
 
-            throw Error('Expected key for kind ' + expected_kind + ' but found kind ' + key.kind + ' instead.');
+            throw new UnexpectedDatastoreKind('Expected key for kind ' + expected_kind + ' but found kind ' + key.kind + ' instead.');
 
           case 5:
             _context.next = 7;
@@ -62,6 +62,15 @@ var getEntityByResourceId = function () {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Datastore stuff
+var _require = require('./errors'),
+    InvalidDatastoreKey = _require.InvalidDatastoreKey;
+
+var _require2 = require('./errors'),
+    InvalidResourceId = _require2.InvalidResourceId;
+
+var _require3 = require('./errors'),
+    UnexpectedDatastoreKind = _require3.UnexpectedDatastoreKind;
+
 var SEPARATOR = String.fromCharCode(30);
 var INTPREFIX = String.fromCharCode(31);
 
@@ -71,6 +80,16 @@ function toResourceId(key) {
     :param key: An instance of `ndb.Key`
   */
   //https://github.com/googleapis/nodejs-datastore/blob/master/samples/concepts.js
+
+  // Ducktype check the key
+  if (!key || !key.path) {
+    throw new InvalidDatastoreKey('Argument Key must be an instance of Datastore Key');
+  }
+
+  // Validate that key is persisted - last val will be undefined
+  if (key.path[key.path.length - 1] === undefined) {
+    throw new InvalidDatastoreKey('Key does not appear to be persisted to datastore. Received path: ' + key.path);
+  }
 
   var bits = key.path.map(function (bit, i) {
     if (i % 2 === 1) {
@@ -96,6 +115,16 @@ function toResourceId(key) {
 };
 
 function fromResourceId(datastoreClient, resource_id) {
+  // Validate Datastore Client - ducktype...
+  if (typeof datastoreClient.key != 'function') {
+    throw new TypeError('First argumemnt should be an instance of DatastoreClient');
+  }
+
+  // Validate resourceId
+  if (!resource_id || typeof resource_id != 'string' || resource_id === '') {
+    throw new InvalidResourceId('Resource Ids must be an instance of str. Received:' + resource_id);
+  }
+
   var buff = Buffer.from(resource_id, 'base64');
   var text = buff.toString('utf8');
   var bits = text.split(SEPARATOR);
