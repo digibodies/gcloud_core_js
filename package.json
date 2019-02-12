@@ -20,7 +20,7 @@
   "homepage": "https://github.com/digibodies/gcloud_core_js#readme",
   "peerDependencies": {
     "@google-cloud/datastore": "^3.0.1",
-    "core": "https://github.com/digibodies/core_js.git#v0.0.1"
+    "core": "https://github.com/digibodies/core_js.git#v0.0.2"
   },
   "devDependencies": {
     "@google-cloud/datastore": "^3.0.1",
