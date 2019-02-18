@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 // Tests for datastore utils
 
 const {InvalidDatastoreKey} = require('../../src/datastore/errors');
@@ -10,8 +12,7 @@ const dsClient = new Datastore();
 describe('Get Resource Id From Key', () => {
   test('Should resolve datastore key with string keyname', () => {
     let key = dsClient.key(['UserEntity', 'does_not_exist']);
-    expect(ds.toResourceId(key)).toEqual('VXNlckVudGl0eR4fZG9lc19ub3RfZXhpc3Q');
-    // TODO: 'VXNlckVudGl0eR5kb2VzX25vdF9leGlzdA' ???
+    expect(ds.toResourceId(key)).toEqual('VXNlckVudGl0eR5kb2VzX25vdF9leGlzdA');
   });
 
   test('Should resolve datastore key with large id', () => {
@@ -118,7 +119,7 @@ describe('Resource ID Serialization and Deserialization', () => {
       await dsClient.save(user);
     } catch(err) {
       throw new Error('Unable to connect to datastore emulator. Is it running (`make test-env`) and the `DATASTORE_EMULATOR_HOST` is correct in the Makefile? Original Error: ' + err.message);
-    };
+    }
 
     // Encode from raw key
     let resourceId = ds.toResourceId(key);
@@ -157,7 +158,7 @@ describe('Get Datastore Entity by resource_id', () => {
       await dsClient.save(user);
     } catch(err) {
       throw new Error('Unable to connect to datastore emulator. Is it running (`make test-env`) and the `DATASTORE_EMULATOR_HOST` is correct in the Makefile? Original Error: ' + err.message);
-    };
+    }
 
     // Convert entity to resource id
     let resource_id = ds.toResourceId(key);

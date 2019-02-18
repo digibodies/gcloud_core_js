@@ -32,9 +32,7 @@ function toResourceId(key) {
         // TODO: This will convert "1234" to 1234, which...
         // node + google + 64 bit ints = chaos
 
-        let maybeInt = Number(bit);
-        if (maybeInt != NaN) {
-
+        if (!isNaN(bit)) {
           bit = INTPREFIX + bit.toString();
         }
       }
@@ -45,7 +43,7 @@ function toResourceId(key) {
   let buff = Buffer.from(bits.join(SEPARATOR));
   let base64data = buff.toString('base64');
   return base64data.replace(new RegExp('=', 'g'), '');
-};
+}
 
 function fromResourceId(datastoreClient, resource_id) {
   // Validate Datastore Client - ducktype...

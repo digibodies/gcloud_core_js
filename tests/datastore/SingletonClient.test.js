@@ -1,3 +1,4 @@
+/* eslint-env jest */
 // Tests around the singleton client
 const {Datastore} = require('@google-cloud/datastore');
 const SingletonClient = require('../../dist/datastore/singletonClient');
@@ -54,7 +55,7 @@ test('stock datastore and singleton datastore produce same fetch results', async
     await stockClient.save(user);
   } catch(err) {
     throw new Error('Unable to connect to datastore emulator. Is it running (`make test-env`) and the `DATASTORE_EMULATOR_HOST` is correct in the Makefile? Original Error: ' + err.message);
-  };
+  }
 
   const result1 = await stockClient.get(key);
   const result2 = await singletonClient.get(key);
